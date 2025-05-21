@@ -29,20 +29,21 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|min:10',
-            'content' => 'required|string|max:624'
-        ]);
-
-        // $data = [
-        //     'title' => $request->title,
-        //     'content' => $request->content
-        // ];
-
-        Post::create($validatedData);
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string|min:10',
+            ]);
+    
+            Post::create($validatedData);
+        }
+        catch(ValidationException $e) {
+            \Log::debug('validation error' . $e->getMessage());
+        }
 
         return redirect('/posts');
     }
+
 
     /**
      * Display the specified resource.
