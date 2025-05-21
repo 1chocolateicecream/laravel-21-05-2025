@@ -29,12 +29,17 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $data = [
-            'title' => $request->title,
-            'content' => $request->content
-        ];
+        $validatedData = $request->validate([
+            'title' => 'required|string|min:10',
+            'content' => 'required|string|max:624'
+        ]);
 
-        Post::create($data);
+        // $data = [
+        //     'title' => $request->title,
+        //     'content' => $request->content
+        // ];
+
+        Post::create($validatedData);
 
         return redirect('/posts');
     }
