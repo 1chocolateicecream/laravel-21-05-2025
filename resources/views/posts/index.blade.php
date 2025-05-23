@@ -15,6 +15,9 @@
                     <button type="submit">Delete</button>
                     </form>
                 </div>
+                    @if ($post->image_path)
+                    <img src="{{ asset('storage/' . $post->image_path) }}" alt="post image" style="max-width: 150px;">
+                    @endif
             </li>
         @endforeach
     </ul>

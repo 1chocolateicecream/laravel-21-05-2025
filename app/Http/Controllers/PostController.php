@@ -29,21 +29,22 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'content' => 'required|string|min:10',
-            ]);
-    
-            Post::create($validatedData);
-        }
-        catch(ValidationException $e) {
-            \Log::debug('validation error' . $e->getMessage());
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string|min:10',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validatedData['image_path'] = $request->file('image')->store('images', 'public');
+        } else {
+            $validatedData['image_path'] = null;
         }
 
-        return redirect('/posts');
+        Post::create($validatedData);
+
+        return redirect()->route('posts.index')->with('success', 'Пост создан!');
     }
-
 
     /**
      * Display the specified resource.
@@ -51,7 +52,7 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
-        return view('posts.show', ['post' => $post]);
+        return view('posts.show', compact('post'));
     }
     
     /**
